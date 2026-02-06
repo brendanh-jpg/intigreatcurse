@@ -1,0 +1,52 @@
+# Project: PlaySpace → Owl Practice Sync
+
+## Context
+This is a browser automation project that syncs data one-directionally from
+PlaySpace Health (pediatric digital therapy platform) to Owl Practice
+(therapist EHR/practice management). There are NO APIs for Owl Practice —
+all interactions are fully browser-automated using Playwright running in
+Browserbase cloud browser sessions.
+
+## Tech Stack
+- TypeScript (strict mode)
+- Playwright (browser automation)
+- Browserbase SDK (@browserbasehq/sdk) for headless cloud browsers
+- Zod for runtime schema validation
+- Winston for structured logging
+- Node.js 20+
+
+## Architecture
+- src/browser/ — Browserbase session management and Playwright helpers
+- src/playspace/ — Extract data from PlaySpace via browser automation
+- src/owl/ — Push data into Owl Practice via browser automation
+- src/sync/ — Orchestration, data mapping, deduplication, logging
+
+## Data Flow
+PlaySpace (extract) → Mapper → Dedup Check → Owl Practice (push)
+
+Sync order matters:
+1. Clients first (other records reference them)
+2. Appointments second (session notes attach to them)
+3. Session Notes third
+4. Meeting Links fourth
+
+## Coding Standards
+- Always use async/await, never raw promises
+- Every browser interaction must use waitForSelector before acting
+- Every page navigation must wait for networkidle or a known element
+- Take a debug screenshot on any failure (saved to /debug)
+- All data types defined with Zod schemas (not just TS interfaces)
+- Structured JSON logging with Winston on every operation
+- Never hardcode selectors — use descriptive constants in a selectors file
+- Retry transient failures with exponential backoff (max 3 retries)
+- Every sync operation must be idempotent
+
+## Error Handling
+- Wrap all Playwright interactions in try/catch
+- On failure: screenshot → log error with context → continue to next record
+- Circuit breaker: if 3+ consecutive records fail, pause sync and alert
+
+## Environment Variables (loaded from .env)
+BROWSERBASE_API_KEY, BROWSERBASE_PROJECT_ID, OWL_PRACTICE_URL,
+OWL_USERNAME, OWL_PASSWORD, PLAYSPACE_URL, PLAYSPACE_USERNAME,
+PLAYSPACE_PASSWORD, SYNC_INTERVAL_MINUTES, LOG_LEVEL

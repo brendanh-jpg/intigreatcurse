@@ -1,0 +1,32 @@
+{
+  "name": "playspace-owl-sync",
+  "version": "1.0.0",
+  "description": "Browser-automated sync from PlaySpace Health to Owl Practice",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "sync": "tsx src/index.ts --once",
+    "sync:schedule": "tsx src/index.ts --schedule",
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts --once",
+    "trigger": "tsx src/trigger.ts"
+  },
+  "dependencies": {
+    "@browserbasehq/sdk": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "playwright": "^1.49.0",
+    "winston": "^3.14.2",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.23.8",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
